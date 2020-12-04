@@ -1,7 +1,8 @@
 <template>
-    <span class="todo-text" :style="{ backgroundColor: todoColour()}">{{ todo.text }}</span>
-    <span class="todo-date" :style="{ backgroundColor: todoColour()}">{{ todo.date.format('MM-DD-YYYY') }}</span>
+    <span class="todo-text" :class="{ stroke : todo.done }" :style="{ backgroundColor: todoColour()}">{{ todo.text }}</span>
+    <span class="todo-date" :class="{ stroke : todo.done }" :style="{ backgroundColor: todoColour()}">{{ todo.date.format('MM-DD-YYYY') }}</span>
     <button class="todo-remove-button" v-on:click="remove">Remove</button>
+    <button class="todo-done-button" v-on:click="done" v-bind:disabled="todo.done">Done</button>
 </template>
 
 <script>
@@ -23,6 +24,9 @@ export default {
   methods: {
     remove () {
         this.$emit('remove')
+    },
+    done () {
+      this.todo.done = true;
     },
     todoColour() {
       if (this.todo.date.isSame(moment(), 'day')) {
@@ -46,4 +50,9 @@ span {
   margin-left: 2px;
   margin-right: 2px;
 }
+
+.stroke {
+  text-decoration: line-through;
+}
+
 </style>

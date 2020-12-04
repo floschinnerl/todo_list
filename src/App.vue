@@ -9,18 +9,21 @@
         class="todo-text"
         placeholder="New todo"
       />
+      <datepicker v-on:update="dateUpdated"/>
       <button class="todo-add-button" v-on:click="addTodo()">Add</button>
     </div>
     
     <ul v-if="todos.length">
       <li class="todo">
         <span class="todo-text list-header">Todo</span>
+        <span class="todo-date list-header">Due date</span>       
         <span class="todo-empty-button list-header"></span>
+        <span class="todo-empty-button list-header"></span>
+
       </li>
 
       <li class="todo" v-for="todo in todos" :key="todo.id">
-        <span class="todo-text">{{ todo.text }}</span>
-        <button class="todo-remove-button" v-on:click="removeTodo(todo)">Remove</button>
+        <todo :todo="todo" v-on:remove="removeTodo(todo)"/>
       </li>
     </ul>
     <p class="none" v-else>Add a new todo in the input above</p>
@@ -28,34 +31,43 @@
 </template>
 
 <script>
+import datepicker from './components/datepicker.vue'
+import todo from './components/todo.vue'
+
 export default {
   name: "App",
   components: {
+    datepicker,
+    todo 
   },
   data() {
     return {
       newTodoText: "",
+      newTodoDate: "",
       todos: [],
     };
   },
   methods: {
     addTodo() {
       if (this.newTodoText) {
-
         this.todos.push({
           text: this.newTodoText,
+          date: this.newTodoDate,
           id: Date.now(),
           done: false
         });
-
-        this.newTodoText = "";
-      }
+        this.todos.sort((todoA, todoB) => -todoA.date.diff(todoB.date))
+        this.newTodoText = "";      
+        }
     },
     removeTodo (item) {
       this.todos = this.todos.filter((_item) => _item !== item);
-    }
-  },
-};
+    },
+  dateUpdated(date) {
+    this.newTodoDate = date.clone();
+  }
+}
+}
 </script>
 
 <style>
@@ -156,4 +168,30 @@ p.none {
   color: #888;
   font-size: small;
 }
+
+.todo-done-button {
+  flex: 1;
+  border: 1px solid green;
+  background-color: green;
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  cursor: pointer;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.todo-done-button:disabled {
+  flex: 1;
+  border: 1px solid rgb(140,170,100) ;
+  background-color: rgb(140,170,100);
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  cursor: pointer;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
 </style>
+
